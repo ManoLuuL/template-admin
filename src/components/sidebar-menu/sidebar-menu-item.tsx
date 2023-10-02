@@ -8,7 +8,7 @@ const SidebarMenuItem: FC<SidebarMenuItemProps> = (props) => {
   const menuLink = useMemo(() => {
     return (
       <div
-        className={`flex flex-col justify-center items-center h-20 w-20 text-gray-600 ${className}`}
+        className={`flex flex-col justify-center items-center h-20 w-20 text-gray-600 dark:text-gray-200 ${className}`}
       >
         {icon}
         <span className="text-xs font-light ">{text}</span>
@@ -18,7 +18,10 @@ const SidebarMenuItem: FC<SidebarMenuItemProps> = (props) => {
 
   return (
     <>
-      <li onClick={onClick} className="hover:bg-gray-100 cursor-pointer">
+      <li
+        onClick={onClick}
+        className="hover:bg-gray-100 cursor-pointer dark:hover:bg-gray-800"
+      >
         {url ? <Link href={url}>{menuLink}</Link> : menuLink}
       </li>
     </>
