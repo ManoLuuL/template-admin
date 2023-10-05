@@ -1,8 +1,9 @@
-import { FC, createContext, useState } from "react";
+import { FC, createContext, useEffect, useState } from "react";
 import firebase from "../../firabase/config";
 import { AuthContextProps, AuthContextProvider } from "./types";
 import { UserModel } from "@/models/user";
 import router from "next/router";
+import Cookies from "js-cookie";
 
 const AuthContext = createContext<AuthContextProps>({
   user: null,
@@ -22,27 +23,53 @@ const userStandardized = async (userFirebase: firebase.User | null) => {
   };
 };
 
+const manageCookie = (logado: boolean) => {
+  if (logado) {
+    Cookies.set("admin-template-auth", JSON.stringify(logado), {
+      expires: 7,
+    });
+  } else {
+    Cookies.remove("admin-template-auth");
+  }
+};
+
 export const AuthProvider: FC<AuthContextProvider> = ({ children }) => {
-  const [user, setUser] = useState<UserModel | null>(null);
+  const [user, setUser] = useState<UserModel | undefined>();
+  const [isLoading, setIsLoading] = useState(true);
+
+  const settingsUser = async (userFirebase: firebase.User | null) => {
+    if (userFirebase?.email) {
+      const usuario = await userStandardized(userFirebase);
+      setUser(usuario);
+      manageCookie(true);
+      setIsLoading(false);
+      return usuario?.email;
+    } else {
+      setUser(undefined);
+      manageCookie(false);
+      setIsLoading(false);
+      return false;
+    }
+  };
 
   const loginGoogle = async () => {
     const resp = await firebase
       .auth()
       .signInWithPopup(new firebase.auth.GoogleAuthProvider());
 
-    if (resp.user?.email) {
-      const usuario = await userStandardized(resp.user);
-      if (usuario) {
-        setUser(usuario);
-        router.push("/");
-      }
-    }
+    settingsUser(resp.user);
+    router.push("/");
   };
+
+  useEffect(() => {
+    const cancel = firebase.auth().onIdTokenChanged(settingsUser);
+    return () => cancel();
+  }, []);
 
   return (
     <AuthContext.Provider
       value={{
-        user,
+        user: user ?? null,
         loginGoogle,
       }}
     >
