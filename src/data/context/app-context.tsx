@@ -8,7 +8,7 @@ export const AppProvider: FC<AppContextProvider> = ({ children }) => {
   const handleChangeTema = () => {
     setTema(tema === "light" ? "dark" : "light");
   };
-  console.log(tema);
+
   return (
     <AppContext.Provider
       value={{

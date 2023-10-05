@@ -3,17 +3,40 @@ import { AutenticacaoProps } from "./types";
 import { AuthInput } from "@/components/auth/auth-input";
 import img from "../assets/img-6.png";
 import Image from "next/image";
+import { IconAttention } from "@/components/sidebar-menu/icons";
+import useAuthAutentication from "@/data/hooks/use-auth-autentication";
 
 export default function AuthPage(props: AutenticacaoProps) {
   const {} = props;
 
+  const { loginGoogle } = useAuthAutentication();
+
   const [mode, setMode] = useState<"login" | "cadastro">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
+  const showError = (msg: string, time = 5) => {
+    setError(msg);
+    setTimeout(() => setError(null), time * 1000);
+  };
 
   const handleSubmit = () => {
-    if (mode === "login") console.log("login");
-    else console.log("cadastro");
+    if (mode === "login") {
+      try {
+        console.log("login");
+      } catch (e) {
+        console.error(e);
+        showError("Ocorreu um erro ao logar no sistema!");
+      }
+    } else {
+      try {
+        console.log("Cadastro");
+      } catch (e) {
+        console.error(e);
+        showError("Ocorreu um erro ao cadastrar a conta no sistema!");
+      }
+    }
   };
 
   return (
@@ -31,6 +54,13 @@ export default function AuthPage(props: AutenticacaoProps) {
             ? "Entre com a sua conta"
             : "Cadastre-se na plataforma"}
         </h1>
+        {error && (
+          <div className="flex bg-red-400 text-white py-3 px-5 my-2 border border-red-700 rounded-lg items-center">
+            {IconAttention(7)}
+            <span className="ml-3">Ocorreu um erro no sistema!</span>
+          </div>
+        )}
+
         <AuthInput
           label="E-mail"
           value={email}
@@ -55,7 +85,7 @@ export default function AuthPage(props: AutenticacaoProps) {
 
         <hr className="my-6 border-gray-300 w-full" />
         <button
-          onClick={handleSubmit}
+          onClick={loginGoogle}
           className="w-full bg-red-500 hover:bg-red-400 text-white rounded-lg px-4 py-3"
         >
           Entrar com Google
