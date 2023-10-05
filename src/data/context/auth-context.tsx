@@ -53,17 +53,38 @@ export const AuthProvider: FC<AuthContextProvider> = ({ children }) => {
   };
 
   const loginGoogle = async () => {
-    const resp = await firebase
-      .auth()
-      .signInWithPopup(new firebase.auth.GoogleAuthProvider());
+    setIsLoading(true);
+    try {
+      const resp = await firebase
+        .auth()
+        .signInWithPopup(new firebase.auth.GoogleAuthProvider());
 
-    settingsUser(resp.user);
-    router.push("/");
+      settingsUser(resp.user);
+      router.push("/");
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const logoff = async () => {
+    setIsLoading(true);
+    try {
+      await firebase.auth().signOut();
+      await settingsUser(null);
+      router.push("/auth");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
-    const cancel = firebase.auth().onIdTokenChanged(settingsUser);
-    return () => cancel();
+    if (Cookies.get("admin-template-auth")) {
+      const cancel = firebase.auth().onIdTokenChanged(settingsUser);
+      return () => cancel();
+    }
+    setIsLoading(false);
   }, []);
 
   return (
@@ -71,6 +92,8 @@ export const AuthProvider: FC<AuthContextProvider> = ({ children }) => {
       value={{
         user: user ?? null,
         loginGoogle,
+        logoff,
+        loading: isLoading,
       }}
     >
       {children}

@@ -3,8 +3,11 @@ import { SidebarMenu } from "./types";
 import SidebarMenuItem from "./sidebar-menu-item";
 import { IconExit, IconHome, IconNotification, IconSettings } from "./icons";
 import { Logo } from "../logo";
+import useAuthAutentication from "@/data/hooks/use-auth-autentication";
 
 const SidebarMenu: FC<SidebarMenu> = () => {
+  const { logoff } = useAuthAutentication();
+
   return (
     <>
       <aside className="flex flex-col dark:bg-gray-900 dark:text-gray-200 bg-gray-200 text-gray-700">
@@ -28,7 +31,7 @@ const SidebarMenu: FC<SidebarMenu> = () => {
           <SidebarMenuItem
             text="Sair"
             icon={IconExit}
-            onClick={() => console.log("sair")}
+            onClick={logoff}
             className="text-red-500 dark:text-red-400 hover:bg-red-400 hover:text-white dark:hover:text-white"
           />
         </ul>

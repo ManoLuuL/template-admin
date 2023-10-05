@@ -14,6 +14,8 @@ export type AppContextProps = {
 export type AuthContextProps = {
   user: UserModel | null;
   loginGoogle?(): Promise<void>;
+  logoff?(): Promise<void>;
+  loading?: boolean;
 };
 
 export type AuthContextProvider = {
