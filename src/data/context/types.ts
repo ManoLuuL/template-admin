@@ -7,7 +7,7 @@ export type AppContextProvider = {
 export type Tema = "dark" | "light";
 
 export type AppContextProps = {
-  tema?: Tema;
+  tema?: string;
   changeTema?(): void;
 };
 
@@ -15,6 +15,8 @@ export type AuthContextProps = {
   user: UserModel | null;
   loginGoogle?(): Promise<void>;
   logoff?(): Promise<void>;
+  login?(email: string, password: string): Promise<void>;
+  register?(email: string, password: string): Promise<void>;
   loading?: boolean;
 };
 

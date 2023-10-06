@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { useState } from "react";
 import { AutenticacaoProps } from "./types";
 import { AuthInput } from "@/components/auth/auth-input";
 import img from "../assets/img-6.png";
@@ -9,7 +9,7 @@ import useAuthAutentication from "@/data/hooks/use-auth-autentication";
 export default function AuthPage(props: AutenticacaoProps) {
   const {} = props;
 
-  const { loginGoogle } = useAuthAutentication();
+  const { loginGoogle, login, register } = useAuthAutentication();
 
   const [mode, setMode] = useState<"login" | "cadastro">("login");
   const [email, setEmail] = useState("");
@@ -21,21 +21,17 @@ export default function AuthPage(props: AutenticacaoProps) {
     setTimeout(() => setError(null), time * 1000);
   };
 
-  const handleSubmit = () => {
-    if (mode === "login") {
-      try {
-        console.log("login");
-      } catch (e) {
-        console.error(e);
-        showError("Ocorreu um erro ao logar no sistema!");
+  const handleSubmit = async () => {
+    try {
+      if (mode === "login") {
+        await login(email, password);
+      } else {
+        await register(email, password);
       }
-    } else {
-      try {
-        console.log("Cadastro");
-      } catch (e) {
-        console.error(e);
-        showError("Ocorreu um erro ao cadastrar a conta no sistema!");
-      }
+    } catch (e) {
+      console.error(e);
+      // @ts-ignore
+      showError(e?.message ?? "Ocorreu um erro ao executar a ação!");
     }
   };
 
@@ -56,8 +52,8 @@ export default function AuthPage(props: AutenticacaoProps) {
         </h1>
         {error && (
           <div className="flex bg-red-400 text-white py-3 px-5 my-2 border border-red-700 rounded-lg items-center">
-            {IconAttention(7)}
-            <span className="ml-3">Ocorreu um erro no sistema!</span>
+            {IconAttention(6)}
+            <span className="ml-3">{error}</span>
           </div>
         )}
 

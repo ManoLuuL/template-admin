@@ -7,6 +7,8 @@ import Cookies from "js-cookie";
 
 const AuthContext = createContext<AuthContextProps>({
   user: null,
+  login: async () => undefined,
+  register: async () => undefined,
 });
 
 const userStandardized = async (userFirebase: firebase.User | null) => {
@@ -59,10 +61,38 @@ export const AuthProvider: FC<AuthContextProvider> = ({ children }) => {
         .auth()
         .signInWithPopup(new firebase.auth.GoogleAuthProvider());
 
-      settingsUser(resp.user);
+      await settingsUser(resp.user);
       router.push("/");
     } catch (e) {
       console.error(e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const login = async (email: string, password: string) => {
+    setIsLoading(true);
+    try {
+      const resp = await firebase
+        .auth()
+        .signInWithEmailAndPassword(email, password);
+
+      await settingsUser(resp.user);
+      router.push("/");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const register = async (email: string, password: string) => {
+    setIsLoading(true);
+    try {
+      const resp = await firebase
+        .auth()
+        .createUserWithEmailAndPassword(email, password);
+
+      await settingsUser(resp.user);
+      router.push("/");
     } finally {
       setIsLoading(false);
     }
@@ -94,6 +124,8 @@ export const AuthProvider: FC<AuthContextProvider> = ({ children }) => {
         loginGoogle,
         logoff,
         loading: isLoading,
+        login,
+        register,
       }}
     >
       {children}

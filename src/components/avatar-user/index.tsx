@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import useAuthAutentication from "@/data/hooks/use-auth-autentication";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,11 +10,12 @@ export const AvatarUser: FC<AvatarUserProps> = ({ className }) => {
 
   return (
     <Link href="/profile">
-      <img
-        alt="Avatar do Usuario"
-        src={`${user?.imageUrl ?? avatar}`}
+      <Image
+        alt=""
+        src={user?.imageUrl ?? avatar}
         className={`h-10 w-10 rounded-full cursor-pointer ${className}`}
         width={20}
+        height={20}
       />
     </Link>
   );

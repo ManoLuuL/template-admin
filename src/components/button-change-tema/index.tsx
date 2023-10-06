@@ -5,8 +5,6 @@ import { IconMoon, IconSun } from "../sidebar-menu/icons";
 export const ButtonChangeTema: FC<ButtonChangeTemaProps> = (props) => {
   const { changeTema, tema } = props;
 
-  console.log(tema);
-
   return tema === "dark" ? (
     <div
       onClick={changeTema}
